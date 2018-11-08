@@ -18,7 +18,11 @@ The reporting tool makes use of a saved view that joins all three tables of the 
 The code for creating this view is:
 
 ```
-placeholder for view code
+create view article_info as
+    select articles.title, articles.author, authors.name, count(log.path) as views
+    from articles, authors, log
+    where articles.author = authors.id and log.path like concat('%', articles.slug)
+    group by articles.title, articles.author, authors.name;
 ```
 
 ## Running the Logs Analysis tool

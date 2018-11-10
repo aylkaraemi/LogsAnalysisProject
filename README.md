@@ -13,16 +13,38 @@ The report lists:
 A sample of the output produced can be found in the SampleReport.txt file.
 
 ## Created View
-The reporting tool makes use of a saved view that joins all three tables of the sample news database.
+The reporting tool makes use of three saved views: one joins all three tables to allow tracking requests by article or author, the second creates a table showing how many requests resulted in errors each day, and the third shows both the number of errors per day and the total requests per day to allow calculating the percentage of errors per day.
 
-The code for creating this view is:
+The code for creating the three table join view is:
 
 ```
 create view article_info as
     select articles.title, articles.author, authors.name, count(log.path) as views
-    from articles, authors, log
-    where articles.author = authors.id and log.path like concat('%', articles.slug)
-    group by articles.title, articles.author, authors.name;
+        from articles, authors, log
+        where articles.author = authors.id and log.path like concat('%', articles.slug)
+        group by articles.title, articles.author, authors.name;
+```
+
+The code for creating the request error view is:
+
+```
+create view request_errors as
+    select date_trunc('day', time) as date, count(*) as errors
+        from log
+        where status like '4%' or status like '5%'
+        group by date
+        order by date
+```
+
+The code for creating the errors vs totals view:
+
+```
+create view daily_requests as
+    select request_errors.date, request_errors.errors, count(log.status) as total
+        from request_errors, log
+        where request_errors.date = date_trunc('day', log.time)
+        group by date, request_errors.errors
+        order by date;
 ```
 
 ## Running the Logs Analysis tool

@@ -6,7 +6,6 @@ db_name = "news"
 
 
 def ask_queries():
-    # retuns a list of the top 3 most popular articles rated by # of views
     db = psycopg2.connect(dbname=db_name)
     c = db.cursor()
     c.execute("""
@@ -17,7 +16,7 @@ def ask_queries():
                 """)
     articles = c.fetchall()
     c.execute("""
-                select sum(views) as total_views, name
+                select name, sum(views) as total_views
                     from article_info
                     group by name
                     order by total_views desc
@@ -34,10 +33,27 @@ def ask_queries():
 
 def generate_report():
     articles, authors, request_errors = ask_queries()
-    report = ''
-    print(articles + "\n" + authors + "\n" + request_errors)
+
+    report = 'The top three articles of all time are:\n\n'
+    i = 1
+    for row in articles:
+        report = report + "{}. {} with {} views\n".format(i, row[0], row[1])
+        i += 1
+    report = report + "\n\nThe most popular authors of all time are:\n\n"
+    i = 1
+    for row in authors:
+        report = report + "{}. {} with {} views\n".format(i, row[0], row[1])
+        i += 1
+    report = report + "\n\nMore than 1% of requests returned errors on:\n\n"
+    for row in request_errors:
+        date = row[0].date()
+        errors = round(row[1], 1)
+        report = report + "{} with {} % errors\n".format(date, errors)
+
+    print(report)
+    return report
 
 
 
 if __name__ == '__main__':
-    pass
+    report = generate_report()

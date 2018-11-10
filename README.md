@@ -1,6 +1,6 @@
 # FSND - Logs Analysis
 
-Project for the Udacity Full Stack Nanodegree program.
+A project for the Udacity Full Stack Nanodegree program.
 
 The logs analysis program is a reporting tool that connects to the FSND sample database using Python 3, runs a series of SQL queries, then prints the results to the screen in an easy to read format.
 
@@ -15,7 +15,7 @@ A sample of the output produced can be found in the SampleReport.txt file.
 ## Created View
 The reporting tool makes use of three saved views: one joins all three tables to allow tracking requests by article or author, the second creates a table showing how many requests resulted in errors each day, and the third shows both the number of errors per day and the total requests per day to allow calculating the percentage of errors per day.
 
-The code for creating the three table join view is:
+The code for creating the view joining all tables is:
 
 ```
 create view article_info as
@@ -33,7 +33,7 @@ create view request_errors as
         from log
         where status like '4%' or status like '5%'
         group by date
-        order by date
+        order by date;
 ```
 
 The code for creating the errors vs totals view:

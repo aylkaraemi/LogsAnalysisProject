@@ -31,6 +31,7 @@ def ask_queries():
     db.close()
     return articles, authors, request_errors
 
+
 def generate_report():
     articles, authors, request_errors = ask_queries()
 
@@ -52,7 +53,6 @@ def generate_report():
 
     print(report)
     return report
-
 
 
 if __name__ == '__main__':

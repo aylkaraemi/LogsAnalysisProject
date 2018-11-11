@@ -69,6 +69,8 @@ If there are any errors from the `psql -d news -f newsdata.sql`, and you already
 
 Once you have the database set up you will need to run the code below to create three new saved views that the reporting tool relies on.
 
+**Note** Troubleshooting tips and VM configuration instructions sourced from Udacity "Installing the Virtual Machine" lesson within the Intro to Relational Databases course.
+
 ### Created Views
 The reporting tool makes use of three saved views: one joins all three tables to allow tracking requests by article or author, the second creates a table showing how many requests resulted in errors each day, and the third shows both the number of errors per day and the total requests per day to allow calculating the percentage of errors per day.
 

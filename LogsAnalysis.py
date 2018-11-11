@@ -1,4 +1,4 @@
-#! python3
+#!/usr/bin/env python3
 
 import psycopg2
 
@@ -6,30 +6,33 @@ db_name = "news"
 
 
 def ask_queries():
-    db = psycopg2.connect(dbname=db_name)
-    c = db.cursor()
-    c.execute("""
-                select title, views
-                    from article_info
-                    order by views desc
-                    limit 3
-                """)
-    articles = c.fetchall()
-    c.execute("""
-                select name, sum(views) as total_views
-                    from article_info
-                    group by name
-                    order by total_views desc
-                """)
-    authors = c.fetchall()
-    c.execute("""
-                select date, (errors * 100.0 / total) as percent
-                    from daily_requests
-                    where (errors * 100.0 / total) > 1.0;
-                """)
-    request_errors = c.fetchall()
-    db.close()
-    return articles, authors, request_errors
+    try:
+        db = psycopg2.connect(dbname=db_name)
+        c = db.cursor()
+        c.execute("""
+                    select title, views
+                        from article_info
+                        order by views desc
+                        limit 3
+                    """)
+        articles = c.fetchall()
+        c.execute("""
+                    select name, sum(views) as total_views
+                        from article_info
+                        group by name
+                        order by total_views desc
+                    """)
+        authors = c.fetchall()
+        c.execute("""
+                    select date, (errors * 100.0 / total) as percent
+                        from daily_requests
+                        where (errors * 100.0 / total) > 1.0;
+                    """)
+        request_errors = c.fetchall()
+        db.close()
+        return articles, authors, request_errors
+    except psycopg2.OperationalError:
+        print("There was an issue connecting to the database")
 
 
 def generate_report():
